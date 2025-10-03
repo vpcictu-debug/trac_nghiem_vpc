@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hỏi đáp Cơ Bản</title>
+    <!-- Tải Tailwind CSS để tạo kiểu dáng nhanh chóng -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tải font Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/test.css">
+    <!-- ************************************ -->
+    <!-- PHẦN 1: CSS TÙY CHỈNH VÀ GHI ĐÈ TAILWIND -->
+    <!-- ************************************ -->
+    <style>
+    </style>
+</head>
+
+<body class="flex flex-col items-center justify-between min-h-screen bg-gray-100">
+
+    <!-- ************************************ -->
+    <!-- PHẦN 2: CẤU TRÚC HTML (BODY) -->
+    <!-- ************************************ -->
+    
+    <!-- Header chung của ứng dụng -->
+    <header class="w-full bg-green-500 text-white shadow-lg py-4 px-6 relative">
+        <li><a href="index.html">Quay lại trang chủ</a></li>
+        <h1 class="text-2xl font-bold text-center">Kiểm Tra Kiến Thức Tổng Hợp</h1>
+        <!-- Nút Thoát/Kết thúc bài kiểm tra -->
+        <button id="exit-button" class="absolute top-4 right-6 bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-4 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 text-sm">Thoát</button>
+    </header>
+
+    <!-- Container chính (Chia làm 2 cột trên màn hình lớn) -->
+    <div class="container mx-auto px-4 my-8 grid grid-cols-1 md:grid-cols-10 gap-8 items-start">
+        
+        <!-- KHUNG BÊN TRÁI: NỘI DUNG CÂU HỎI (7/10 cột) -->
+        <div id="quiz-container" class="bg-white p-8 rounded-2xl shadow-xl w-full md:col-span-7">
+            
+            <!-- Màn hình bắt đầu bài kiểm tra -->
+            <div id="start-screen" class="text-center">
+                <h1 class="text-3xl font-bold text-gray-900 mb-4">Bài Kiểm Tra Trắc Nghiệm</h1>
+                <p class="text-gray-600 mb-6">Chào mừng bạn đến với bài kiểm tra! Hãy nhấn "Bắt đầu" để bắt đầu.</p>
+                <button id="start-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105">Bắt đầu</button>
+            </div>
+
+            <!-- Nội dung Quiz: Hiển thị câu hỏi và đáp án -->
+            <div id="quiz-content" class="hidden">
+                <!-- Bộ đếm câu hỏi (VD: 1/10) -->
+                <p id="question-counter" class="text-sm text-gray-500 mb-2"></p>
+                
+                <!-- Tiêu đề/Nội dung câu hỏi -->
+                <h2 id="question-text" class="text-xl font-semibold text-gray-800 mb-2"></h2>
+                
+                <!-- Thông báo cho câu hỏi Multi-Select -->
+                <p id="multiselect-info" class="text-sm text-red-500 font-medium mb-4 hidden">Chọn nhiều đáp án có thể đúng.</p>
+                
+                <!-- 1. Container cho Single/Multi-Select (Chọn đáp án) -->
+                <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <!-- Các nút đáp án được tạo bằng JavaScript -->
+                </div>
+
+                <!-- 2. Container cho Drag & Drop (Kéo thả) -->
+                <div id="dragdrop-container" class="hidden">
+                    <p class="text-sm text-blue-500 font-medium mb-4">Kéo thả đặc trưng vào mô hình dịch vụ Đám mây phù hợp:</p>
+                    
+                    <!-- Vùng kéo (Source): Chứa các thẻ chưa được thả -->
+                    <div id="draggable-items-source" class="source-drop-zone drop-zone flex flex-wrap gap-3 p-4 bg-gray-50 border rounded-xl mb-6 shadow-inner">
+                        <p class="text-gray-500 text-sm italic w-full source-placeholder">Kéo các thẻ ở đây... (Kéo thẻ từ ô đáp án về đây để "kéo ra")</p>
+                    </div>
+                    
+                    <!-- Vùng thả (Targets): Chứa các Category -->
+                    <div id="drop-targets-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Drop zones sẽ được tạo bằng JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- 3. Container cho Fill-in-the-Blank (Điền từ) -->
+                <div id="fill-in-the-blank-container" class="space-y-4 hidden mt-6">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <input 
+                            type="text" 
+                            id="fill-in-the-blank-input" 
+                            placeholder="Nhập đáp án của bạn..." 
+                            class="flex-grow p-3 border border-gray-300 rounded-lg transition duration-150"
+                        >
+                        <button 
+                            id="check-fill-in-the-blank-button"
+                            class="check-button-enabled text-white font-bold py-2 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 disabled:bg-gray-400"
+                            onclick="checkFillInTheBlank()"
+                        >
+                            Kiểm tra đáp án
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Thanh điều hướng dưới cùng -->
+                <div class="flex justify-end items-center mt-6 border-t pt-4 space-x-4">
+                    <!-- Nút Kiểm tra (dùng cho Multi-Select và Drag & Drop) -->
+                    <button 
+                        id="check-answer-button" 
+                        class="hidden text-white font-bold py-2 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
+                    >
+                        Kiểm tra đáp án
+                    </button>
+                    <!-- Nút Câu tiếp theo (chỉ được kích hoạt sau khi kiểm tra) -->
+                    <button 
+                        id="next-button" 
+                        class="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-full shadow-md transition-all duration-300 transform hover:scale-105"
+                    >
+                        Câu tiếp theo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Màn hình kết quả cuối bài thi -->
+            <div id="results-screen" class="hidden text-center">
+                <h2 class="text-3xl font-bold text-green-600 mb-4">Hoàn thành bài kiểm tra!</h2>
+                
+                <!-- HIỂN THỊ ĐIỂM SỐ ĐÃ TỐI ƯU HÓA -->
+                <div class="bg-blue-50 p-6 rounded-2xl shadow-xl inline-block mb-6">
+                    <p class="text-xl font-semibold text-gray-700">Điểm số của bạn:</p>
+                    <!-- Thẻ hiển thị điểm số cuối cùng -->
+                    <p id="final-score" class="text-6xl font-extrabold text-blue-700 mt-2">0 / 0</p>
+                </div>
+                
+                <p id="result-message" class="text-gray-700 mb-6">Bạn có thể xem lại các câu trả lời của mình trên giao diện.</p>
+                <button id="restart-button" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105">Làm lại</button>
+            </div>
+        </div>
+
+        <!-- KHUNG BÊN PHẢI: SIDEBAR (3/10 cột) -->
+        <div id="sidebar" class="bg-white p-6 rounded-2xl shadow-xl w-full hidden md:block md:col-span-3 sticky top-8">
+            <div class="mb-6 text-center">
+                <p class="text-xl font-semibold text-gray-700 mb-2">Thời gian làm bài:</p>
+                <!-- Đồng hồ đếm ngược/đếm thời gian -->
+                <div id="timer" class="text-4xl font-bold text-red-500">00:00</div>
+            </div>
+            
+            <div>
+                <p class="text-lg font-semibold text-gray-700 mb-4">Danh sách câu hỏi:</p>
+                <!-- Danh sách các nút câu hỏi để nhảy qua lại -->
+                <div id="question-list-container" class="grid grid-cols-4 gap-2">
+                    <!-- Các nút câu hỏi được tạo bằng JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="w-full bg-gray-800 text-white text-center py-4 px-6 mt-auto">
+        <p class="text-sm">&copy; Làm bài vui vẻ nhé các bạn!</p>
+    </footer>
+
+    <!-- ************************************ -->
+    <!-- PHẦN 3: LOGIC JAVASCRIPT -->
+    <!-- ************************************ -->
+    <script>
+        // Mảng chứa các câu hỏi trắc nghiệm (Dữ liệu của Quiz)
+    const questions = [
+        {
+            question: "Bỏ ngoài nướng trong, ăn ngoài bỏ trong là gì?",
+            options: ["Nướng khoai lang", "Nướng bắp ngô", "Nướng sắn", "Nướng hạt dẻ"],
+            answer: "Nướng bắp ngô",
+            type: "single_select"
+        },
+        {
+            question: "Bệnh gì bác sĩ bó tay?",
+            options: ["Bệnh đau tim", "Bệnh gãy tay", "Bệnh cảm cúm", "Bệnh mất ngủ"],
+            answer: "Bệnh gãy tay",
+            type: "single_select"
+        },
+        {
+            question: "Con chó đen gọi là chó mực. Con chó vàng gọi là chó phèn. Con chó sanh gọi là chó đẻ. Vậy con chó đỏ gọi là gì?",
+            options: ["Con chó đỏ", "Con chó son", "Con chó lửa", "Con chó máu"],
+            answer: "Con chó đỏ",
+            type: "single_select"
+        },
+        {
+            question: "Bà đó bả chết bả bay lên trời. Hỏi bà ấy chết năm bao nhiêu tuổi?",
+            options: ["63 tuổi", "70 tuổi", "73 tuổi", "75 tuổi"],
+            answer: "73 tuổi",
+            type: "single_select"
+        },
+        {
+            question: "Có 1 đàn chim đậu trên cành, người thợ săn bắn cái rằm. Hỏi chết mấy con?",
+            options: ["10 con", "12 con", "15 con", "20 con"],
+            answer: "15 con",
+            type: "single_select"
+        },
+        {
+            question: "Con gì ăn lửa với nước than?",
+            options: ["Con rồng", "Con tàu", "Con ngựa sắt", "Con sấm"],
+            answer: "Con tàu",
+            type: "single_select"
+        },
+        {
+            question: "Con kiến bò lên tai con voi nói gì khiến voi chết ngay?",
+            options: ["Anh bị ong đốt", "Em có thai với anh", "Anh bị hổ rình", "Anh sẽ ngã"],
+            answer: "Em có thai với anh",
+            type: "single_select"
+        },
+        {
+            question: "Chiếc thuyền chỉ chở được 2 người, nhưng có 3 thằng Mỹ đen và 3 thằng Mỹ trắng ngồi mà không chìm. Tại sao?",
+            options: ["Vì thuyền to hơn bình thường", "Vì đó là tranh vẽ", "Vì thật ra chỉ có hai người: ba của thằng Mỹ đen và ba của thằng Mỹ trắng", "Vì nước cạn"],
+            answer: "Vì thật ra chỉ có hai người: ba của thằng Mỹ đen và ba của thằng Mỹ trắng",
+            type: "single_select"
+        },
+        {
+            question: "Nắng ba năm không bỏ bạn, mưa 1 ngày bạn lại bỏ tôi là cái gì?",
+            options: ["Cái ô", "Cái bóng", "Cái áo mưa", "Cái cây"],
+            answer: "Cái bóng",
+            type: "single_select"
+        },
+        {
+            question: "Trên nhấp dưới giật là đang làm gì?",
+            options: ["Kéo dây chuông", "Đập đất", "Câu cá", "Vắt sữa"],
+            answer: "Câu cá",
+            type: "single_select"
+        },
+        {
+            question: "Con gấu trúc ao ước gì mà không bao giờ được?",
+            options: ["Được ăn thịt", "Được bay", "Được chụp hình màu", "Được ngủ đông"],
+            answer: "Được chụp hình màu",
+            type: "single_select"
+        },
+        {
+            question: "Tay cầm cục thịt nắn nắn, tay vỗ mông là đang làm gì?",
+            options: ["Cho heo ăn", "Cho con bú", "Làm thịt gà", "Nặn đất sét"],
+            answer: "Cho con bú",
+            type: "single_select"
+        },
+        {
+            question: "Cái gì bằng cái vung, vùng xuống ao. Đào chẳng thấy, lấy chẳng được?",
+            options: ["Cái thuyền nan", "Mặt trời", "Mặt trăng", "Cái nón"],
+            answer: "Mặt trăng",
+            type: "single_select"
+        },
+        {
+            question: "Con trai và đàn ong có điểm gì khác nhau?",
+            options: ["Con trai ở dưới nước, ong sống trên cạn", "Con trai không biết bay", "Ong có ngòi, con trai không có", "Con trai biết bơi"],
+            answer: "Con trai ở dưới nước, ong sống trên cạn",
+            type: "single_select"
+        },
+        {
+            question: "Cái gì trong trắng ngoài xanh, trồng đậu trồng hành rồi thả heo vào?",
+            options: ["Bánh chưng", "Dưa hấu", "Bánh tét", "Cái lu"],
+            answer: "Bánh chưng",
+            type: "single_select"
+        },
+        {
+            question: "Cắm vào run rẩy toàn thân, rút ra nước chảy từ chân xuống sàn. Là gì?",
+            options: ["Cái quạt", "Cái vòi nước", "Cái tủ lạnh", "Cái máy bơm"],
+            answer: "Cái tủ lạnh",
+            type: "single_select"
+        },
+        {
+            question: "Con gì mang được miếng gỗ lớn nhưng không mang được hòn sỏi?",
+            options: ["Con ngựa", "Con sông", "Con voi", "Con cua"],
+            answer: "Con sông",
+            type: "single_select"
+        },
+        {
+            question: "Ở Việt Nam, rồng bay ở đâu và đáp ở đâu?",
+            options: ["Bay ở Thăng Long, đáp ở Hạ Long", "Bay ở Huế, đáp ở Đà Nẵng", "Bay ở Hà Nội, đáp ở Hải Phòng", "Bay ở Sài Gòn, đáp ở Vũng Tàu"],
+            answer: "Bay ở Thăng Long, đáp ở Hạ Long",
+            type: "single_select"
+        },
+        {
+            question: "Người đứng ở cầu gặp gấu hung dữ, chỉ ngủ 5 phút. Làm sao qua cầu?",
+            options: ["Trốn xuống gầm cầu", "Đi vòng khác", "Đi đến giữa rồi quay mặt ngược lại để lừa gấu", "Leo lên cây"],
+            answer: "Đi đến giữa rồi quay mặt ngược lại để lừa gấu",
+            type: "single_select"
+        },
+        {
+            question: "Một thằng mù và ba thằng điếc đi ăn phở, mỗi tô 10 ngàn. Hỏi trả bao nhiêu?",
+            options: ["30 ngàn", "40 ngàn", "20 ngàn", "10 ngàn"],
+            answer: "20 ngàn",
+            type: "single_select"
+        },
+        {
+            question: "Where does today come before yesterday?",
+            options: ["On the calendar", "In a dictionary", "In a novel", "On a timeline"],
+            answer: "In a dictionary",
+            type: "single_select"
+        },
+        {
+            question: "What is between the sky and earth?",
+            options: ["The sun", "And (chữ 'and')", "The moon", "The wind"],
+            answer: "And (chữ 'and')",
+            type: "single_select"
+        },
+        {
+            question: "Cắt 1 khúc vải thành 100 khúc, mỗi khúc 5 giây. Hỏi mất bao lâu?",
+            options: ["500 giây", "505 giây", "495 giây", "490 giây"],
+            answer: "495 giây",
+            type: "single_select"
+        },
+        {
+            question: "Muốn diện kiến vua phải nói một câu: thật thì chém đầu, dối thì treo cổ. Phải nói gì?",
+            options: ["Tôi sẽ bị chém đầu", "Tôi sẽ bị treo cổ", "Tôi vô tội", "Tôi là người trung thực"],
+            answer: "Tôi sẽ bị treo cổ",
+            type: "single_select"
+        },
+        {
+            question: "Ông chủ có 7 chỉ vàng, cần trả công 1 chỉ/ngày trong 7 ngày, chỉ được cắt 2 lần. Làm sao?",
+            options: ["Cắt thành 1-3-3", "Cắt thành 1-2-4", "Cắt thành 2-2-3", "Cắt thành 1-6"],
+            answer: "Cắt thành 1-2-4",
+            type: "single_select"
+        },
+        {
+            question: "Nơi nào có đường xá nhưng không xe, có nhà nhưng không người?",
+            options: ["Tranh vẽ", "Máy tính", "Bản đồ", "Trò chơi điện tử"],
+            answer: "Bản đồ",
+            type: "single_select"
+        },
+        {
+            question: "Có một rổ táo, 3 quả. Làm sao chia 3 người mỗi người 1 quả mà vẫn còn 1 quả trong rổ?",
+            options: ["Cắt đôi táo", "Cho một người cả rổ còn táo bên trong", "Thêm 1 quả táo", "Chia không đều"],
+            answer: "Cho một người cả rổ còn táo bên trong",
+            type: "single_select"
+        },
+        {
+            question: "Cây lê có nhiều nhánh và lá, hỏi có mấy quả táo?",
+            options: ["10 quả", "12 quả", "0 quả", "8 quả"],
+            answer: "0 quả",
+            type: "single_select"
+        },
+        {
+            question: "Ba thằng lùn xếp hàng: sau cầm xô, giữa cầm xẻng. Thằng trước cầm gì?",
+            options: ["Cầm dao", "Cầm gậy", "Cầm đầu (đại ca)", "Cầm giỏ"],
+            answer: "Cầm đầu (đại ca)",
+            type: "single_select"
+        },
+        {
+            question: "Quần rộng nhất là quần gì?",
+            options: ["Quần tây", "Quần jean", "Quần đảo", "Quần áo"],
+            answer: "Quần đảo",
+            type: "single_select"
+        },
+        {
+            question: "Con trâu quay đầu nhiều lần, đuôi chỉ hướng nào?",
+            options: ["Hướng Bắc", "Hướng Đông", "Chỉ xuống đất", "Hướng Tây"],
+            answer: "Chỉ xuống đất",
+            type: "single_select"
+        },
+        {
+            question: "Con trai có gì quý nhất?",
+            options: ["Ngọc trai", "Vỏ trai", "Thịt trai", "Nước trai"],
+            answer: "Ngọc trai",
+            type: "single_select"
+        },
+        {
+            question: "Cái gì đi thì nằm, đứng cũng nằm, nhưng nằm lại đứng?",
+            options: ["Bàn tay", "Bàn chân", "Cái ghế", "Cái bút"],
+            answer: "Bàn chân",
+            type: "single_select"
+        },
+        {
+            question: "Con đường nào dài nhất?",
+            options: ["Đường ray", "Đường đời", "Đường cao tốc", "Đường mòn"],
+            answer: "Đường đời",
+            type: "single_select"
+        },
+        {
+            question: "Một ly thủy tinh đầy nước, lấy nước dưới đáy ly mà không đổ nước ra ngoài bằng cách nào?",
+            options: ["Đổ sang ly khác", "Dùng ống hút", "Lắc ly", "Đổ thêm đá"],
+            answer: "Dùng ống hút",
+            type: "single_select"
+        },
+        {
+            question: "Cái gì người mua biết, người bán biết, người xài không bao giờ biết?",
+            options: ["Quan tài", "Xe đạp", "Áo mưa", "Bàn ghế"],
+            answer: "Quan tài",
+            type: "single_select"
+        },
+        {
+            question: "Cơ quan quan trọng nhất của phụ nữ là gì?",
+            options: ["Bộ Y tế", "Hội Liên Hiệp Phụ Nữ", "Gia đình", "Trái tim"],
+            answer: "Hội Liên Hiệp Phụ Nữ",
+            type: "single_select"
+        },
+        {
+            question: "Càng chơi càng ra nước?",
+            options: ["Đánh bài", "Chơi bóng rổ", "Chơi cờ", "Chơi cầu lông"],
+            answer: "Chơi cờ",
+            type: "single_select"
+        },
+        {
+            question: "Lịch nào dài nhất?",
+            options: ["Lịch âm", "Lịch dương", "Lịch sử", "Lịch vạn niên"],
+            answer: "Lịch sử",
+            type: "single_select"
+        },
+        {
+            question: "Cái gì dài như trái chuối, cầm một lúc thì chảy nước ra?",
+            options: ["Kem que", "Dưa leo", "Chuối tiêu", "Kẹo mút"],
+            answer: "Kem que",
+            type: "single_select"
+        },
+        {
+            question: "Tại sao khi bắn súng người ta lại nhắm một mắt?",
+            options: ["Cho đẹp", "Vì nhắm hai mắt không thấy gì", "Do quy định", "Cho tập trung"],
+            answer: "Vì nhắm hai mắt không thấy gì",
+            type: "single_select"
+        },
+        {
+            question: "Bên trái đường có nhà xanh, bên phải có nhà đỏ. Vậy nhà Trắng ở đâu?",
+            options: ["Ở Hà Nội", "Ở Mỹ", "Ở Pháp", "Ở Trung Quốc"],
+            answer: "Ở Mỹ",
+            type: "single_select"
+        },
+        {
+            question: "Khi Beckham đá phạt đền, anh ta sút vào đâu?",
+            options: ["Quả bóng", "Gôn", "Khán giả", "Trọng tài"],
+            answer: "Quả bóng",
+            type: "single_select"
+        },
+        {
+            question: "Xã nào đông nhất?",
+            options: ["Xã hội", "Xã Đàn", "Xã Tân Bình", "Xã Nghĩa Đô"],
+            answer: "Xã hội",
+            type: "single_select"
+        },
+        {
+            question: "Hai người đào trong hai giờ thì được một cái hố. Vậy một người đào trong một giờ thì được mấy cái hố?",
+            options: ["1 cái hố", "2 cái hố", "0.5 cái hố", "3 cái hố"],
+            answer: "1 cái hố",
+            type: "single_select"
+        },
+        {
+            question: "Tại sao chó không cắn được đuôi của mình?",
+            options: ["Vì nó không muốn", "Vì đuôi không đủ dài", "Vì mỏi", "Vì bận sủa"],
+            answer: "Vì đuôi không đủ dài",
+            type: "single_select"
+        },
+        {
+            question: "Con gì không gáy ò ó o mà vẫn gọi là gà?",
+            options: ["Gà trống", "Gà mái", "Gà con", "Vịt"],
+            answer: ["Gà mái", "Gà con"],
+            type: "multi_select"
+        },
+        {
+            question: "Anh chàng chỉ đi thang máy đến tầng 35, còn lại đi bộ. Vì sao?",
+            options: ["Thang máy hỏng", "Thang máy không lên tới tầng 50", "Anh ta sợ độ cao", "Anh ta muốn tập thể dục"],
+            answer: "Thang máy không lên tới tầng 50",
+            type: "single_select"
+        },
+        {
+            question: "Một người lớn và một bé đi núi. Bé là con của người lớn nhưng người lớn không phải cha. Vậy là ai?",
+            options: ["Anh trai", "Mẹ", "Bác", "Ông"],
+            answer: "Mẹ",
+            type: "single_select"
+        },
+        {
+            question: "Làm sao để cái cân tự cân chính nó?",
+            options: ["Nhìn gương soi", "Treo ngược cân", "Lật ngược lại cái cân", "Không thể"],
+            answer: "Lật ngược lại cái cân",
+            type: "single_select"
+        }
+    ];
+
+        let currentQuestionIndex = 0; // Chỉ số câu hỏi hiện tại
+        let elapsedTime = 0; // Thời gian làm bài (giây)
+        let timerInterval; // Biến lưu trữ Interval của đồng hồ
+        
+        /* * Mảng lưu trữ câu trả lời của người dùng.
+         * - Single/Fill-in-the-blank: string (đáp án)
+         * - Multi-select: mảng string (các đáp án được chọn)
+         * - Drag-drop: object {itemText: categoryName}
+         */
+        let answeredQuestions = new Array(questions.length).fill(null);
+        
+        /* * Mảng lưu trữ trạng thái đúng sai của câu hỏi sau khi kiểm tra.
+         * - null: chưa trả lời/chưa kiểm tra
+         * - true: trả lời đúng
+         * - false: trả lời sai
+         */
+        let correctnessStatus = new Array(questions.length).fill(null); 
+
+        // Lấy các phần tử DOM cần thiết
+        const startScreen = document.getElementById('start-screen');
+        const startButton = document.getElementById('start-button');
+        const quizContent = document.getElementById('quiz-content');
+        const questionCounter = document.getElementById('question-counter');
+        const multiselectInfo = document.getElementById('multiselect-info');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const dragdropContainer = document.getElementById('dragdrop-container');
+        const draggableItemsSource = document.getElementById('draggable-items-source');
+        const dropTargetsContainer = document.getElementById('drop-targets-container');
+        const fillInTheBlankContainer = document.getElementById('fill-in-the-blank-container');
+        const fillInTheBlankInput = document.getElementById('fill-in-the-blank-input');
+        const checkFillInTheBlankButton = document.getElementById('check-fill-in-the-blank-button');
+        const checkAnswerButton = document.getElementById('check-answer-button'); // Nút kiểm tra chung (Multi-select, Drag & Drop)
+        const nextButton = document.getElementById('next-button');
+        const resultsScreen = document.getElementById('results-screen');
+        const restartButton = document.getElementById('restart-button');
+        
+        // SỬA LỖI VÀ TÍNH ĐIỂM: Thêm các dòng này để khai báo biến DOM
+        const resultMessage = document.getElementById('result-message'); 
+        const exitButton = document.getElementById('exit-button'); 
+        const finalScore = document.getElementById('final-score'); // Thẻ hiển thị điểm số
+        
+        const sidebar = document.getElementById('sidebar');
+        const timerDisplay = document.getElementById('timer');
+        const questionListContainer = document.getElementById('question-list-container');
+        
+        // --- Chức năng Hỗ trợ (Fill-in-the-Blank) ---
+        
+        /**
+         * Hàm chuẩn hóa chuỗi để so sánh (loại bỏ dấu, chữ hoa/thường, khoảng trắng)
+         */
+        function normalizeString(str) {
+            let normalized = str.toLowerCase().trim();
+            // Loại bỏ dấu (Unicode NFD)
+            normalized = normalized.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+            // Loại bỏ khoảng trắng giữa các từ (để chấp nhận "saothuy" hay "sao thuy")
+            return normalized.replace(/\s+/g, '');
+        }
+        
+        // Gắn sự kiện Enter cho ô input Fill-in-the-Blank
+        fillInTheBlankInput.onkeypress = (event) => {
+            if (event.key === 'Enter') checkFillInTheBlank();
+        };
+
+        // --- Logic Kéo Thả (Drag & Drop) ---
+        
+        function drag(event) {
+            // Lưu ID của item đang kéo
+            event.dataTransfer.setData("text/plain", event.target.id);
+            event.target.classList.add('opacity-50');
+        }
+
+        function dragEnd(event) {
+            // Loại bỏ hiệu ứng mờ
+            event.target.classList.remove('opacity-50');
+        }
+        
+        function allowDrop(event) {
+            event.preventDefault(); // Cho phép thả
+            // Thêm hiệu ứng hover cho vùng thả gần nhất
+            const target = event.target.closest('.drop-zone') || event.target.closest('.source-drop-zone');
+            if (target) {
+                target.classList.add('drag-over');
+            }
+        }
+
+        function dragLeave(event) {
+             // Loại bỏ hiệu ứng hover
+             const target = event.target.closest('.drop-zone') || event.target.closest('.source-drop-zone');
+            if (target) {
+                target.classList.remove('drag-over');
+            }
+        }
+        
+        /**
+         * Xử lý sự kiện thả (Drop)
+         * @param {Event} event 
+         * @param {string | null} categoryName - Tên danh mục (null nếu thả vào vùng Source)
+         */
+        function drop(event, categoryName) {
+            event.preventDefault();
+            
+            let targetZone = event.target.closest('.drop-zone') || event.target.closest('.source-drop-zone');
+            
+            // Nếu đã kiểm tra (có feedback), không cho phép tương tác
+            if (!targetZone || correctnessStatus[currentQuestionIndex] !== null) return; 
+
+            targetZone.classList.remove('drag-over');
+
+            const itemId = event.dataTransfer.getData("text/plain");
+            const draggedElement = document.getElementById(itemId);
+
+            if (draggedElement) {
+                // Loại bỏ khỏi vị trí cũ và thêm vào vùng mới
+                const oldParent = draggedElement.parentElement;
+                if (oldParent) {
+                    oldParent.removeChild(draggedElement);
+                }
+                targetZone.appendChild(draggedElement);
+                
+                // Cập nhật trạng thái câu trả lời
+                let currentAnswer = answeredQuestions[currentQuestionIndex] || {};
+                const itemText = draggedElement.textContent.trim(); 
+
+                const isDroppedBackToSource = targetZone.id === 'draggable-items-source';
+
+                if (isDroppedBackToSource) {
+                    // Kéo về Source: Xóa item khỏi trạng thái
+                    delete currentAnswer[itemText]; 
+                } else { 
+                    // Thả vào Category: Lưu Category mới
+                    currentAnswer[itemText] = categoryName;
+                }
+                
+                // Cập nhật mảng trạng thái
+                answeredQuestions[currentQuestionIndex] = Object.keys(currentAnswer).length > 0 ? currentAnswer : null;
+                
+                // Cập nhật trạng thái nút Kiểm tra
+                updateButtonStates();
+            }
+        }
+        
+        /**
+         * Hàm kiểm tra câu trả lời và trả về true/false.
+         */
+        function checkCorrectness(questionIndex, selectedAnswers) {
+            const currentQuestion = questions[questionIndex];
+            
+            if (currentQuestion.type === "drag_drop") {
+                const droppedAnswers = selectedAnswers || answeredQuestions[questionIndex];
+                if (!droppedAnswers) return false;
+
+                // Phải kiểm tra tất cả các items đã được thả chưa
+                if (Object.keys(droppedAnswers).length !== currentQuestion.items.length) {
+                    return false;
+                }
+
+                // So sánh vị trí thả với vị trí đúng
+                return currentQuestion.items.every(item => {
+                    const droppedCategory = droppedAnswers[item.text];
+                    return droppedCategory === item.correctCategory;
+                });
+
+            } else if (currentQuestion.type === "fill_in_the_blank") {
+                 const userAnswer = selectedAnswers || answeredQuestions[questionIndex];
+                 if (!userAnswer) return false;
+                 
+                 // Sử dụng hàm chuẩn hóa để so sánh
+                 const normalizedUserAnswer = normalizeString(userAnswer);
+                 const normalizedCorrectAnswer = normalizeString(currentQuestion.answer);
+
+                 return normalizedUserAnswer === normalizedCorrectAnswer;
+
+            } else {
+                // Logic cho Single/Multi-Select
+                const correctAnswers = Array.isArray(currentQuestion.answer) ? currentQuestion.answer : [currentQuestion.answer];
+                
+                if (!Array.isArray(selectedAnswers)) {
+                    selectedAnswers = selectedAnswers !== null ? [selectedAnswers] : [];
+                }
+                
+                if (selectedAnswers.length !== correctAnswers.length) {
+                    return false;
+                }
+
+                // Sắp xếp và so sánh mảng
+                selectedAnswers.sort();
+                correctAnswers.sort();
+                return JSON.stringify(selectedAnswers) === JSON.stringify(correctAnswers);
+            }
+        }
+
+        // Hàm hiển thị câu hỏi hiện tại
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            
+            // Cập nhật thông tin chung
+            questionCounter.textContent = `Câu hỏi: ${currentQuestionIndex + 1} / ${questions.length}`;
+            questionText.textContent = currentQuestion.question;
+            
+            // Ẩn tất cả các container
+            optionsContainer.classList.add('hidden');
+            multiselectInfo.classList.add('hidden');
+            dragdropContainer.classList.add('hidden');
+            fillInTheBlankContainer.classList.add('hidden'); 
+            checkAnswerButton.classList.add('hidden'); 
+
+            // Hiển thị container tương ứng
+            if (currentQuestion.type === "drag_drop") {
+                renderDragDropUI(currentQuestion);
+                dragdropContainer.classList.remove('hidden');
+            } else if (currentQuestion.type === "fill_in_the_blank") {
+                renderFillInTheBlankUI(currentQuestion);
+                fillInTheBlankContainer.classList.remove('hidden');
+            } else {
+                renderSelectUI(currentQuestion);
+                optionsContainer.classList.remove('hidden');
+            }
+            
+            // Cập nhật text nút "Câu tiếp theo"
+            nextButton.textContent = currentQuestionIndex >= questions.length - 1 ? "Hoàn thành bài thi" : "Câu tiếp theo";
+
+            updateButtonStates();
+            updateSidebarHighlight();
+        }
+
+        // --- Render Logic cho Select (Single/Multi) ---
+        function renderSelectUI(currentQuestion) {
+            const isMulti = currentQuestion.type === "multi_select";
+            multiselectInfo.classList.toggle('hidden', !isMulti);
+            checkAnswerButton.classList.toggle('hidden', !isMulti); // Hiển thị nút kiểm tra chỉ cho Multi-Select
+            optionsContainer.innerHTML = '';
+
+            // Lấy đáp án đã lưu
+            const savedAnswer = answeredQuestions[currentQuestionIndex];
+            const savedAnswersArray = Array.isArray(savedAnswer) ? savedAnswer : (savedAnswer !== null ? [savedAnswer] : []);
+
+            const isChecked = correctnessStatus[currentQuestionIndex] !== null;
+
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                
+                let classes = [
+                    "answer-button", "w-full", "py-3", "px-4", "rounded-xl", "text-center", 
+                    "bg-gray-100", "border-2", "border-gray-300", 
+                    "transition-all", "duration-200",
+                    "font-medium", "text-gray-800", "shadow-sm"
+                ];
+
+                button.classList.add(...classes);
+
+                if (isChecked) {
+                    // Áp dụng feedback (nếu đã kiểm tra)
+                    button.disabled = true;
+                    button.classList.add("cursor-not-allowed");
+                    
+                    const correctAnswers = Array.isArray(currentQuestion.answer) ? currentQuestion.answer : [currentQuestion.answer];
+                    const isCorrectOption = correctAnswers.includes(option);
+                    const isUserSelected = savedAnswersArray.includes(option);
+
+                    if (isCorrectOption) {
+                        button.classList.add("bg-green-500", "text-white", "border-green-600");
+                        button.classList.remove("bg-gray-100", "border-gray-300");
+                    }
+                    
+                    if (isUserSelected && !isCorrectOption) {
+                        // Đáp án user chọn sai
+                        button.classList.add("bg-red-500", "text-white", "border-red-600");
+                        button.classList.remove("bg-green-500", "border-green-600", "bg-gray-100", "border-gray-300");
+                    }
+                    
+                } else {
+                    // Cho phép tương tác (nếu chưa kiểm tra)
+                    button.classList.add("hover:bg-blue-100", "hover:border-blue-500");
+                    
+                    if (isMulti) {
+                        // Logic cho Multi-Select (chọn/bỏ chọn, cần nút kiểm tra)
+                        button.addEventListener('click', (e) => {
+                            toggleSelection(e.currentTarget);
+                            updateButtonStates(); // FIX LỖI: Cập nhật trạng thái nút "Kiểm tra đáp án" ngay khi chọn
+                        });
+                    } else {
+                        // Logic cho Single-Select (tự động kiểm tra)
+                        button.addEventListener('click', (e) => singleSelectCheck(option, e.currentTarget));
+                    }
+                    // Load lại trạng thái đã chọn (nếu có)
+                    if (savedAnswersArray.includes(option)) {
+                        button.classList.add('selected-option');
+                    }
+                }
+                optionsContainer.appendChild(button);
+            });
+        }
+        
+        // --- Render Logic cho Fill-in-the-Blank ---
+        function renderFillInTheBlankUI(currentQuestion) {
+            const isChecked = correctnessStatus[currentQuestionIndex] !== null;
+            const savedAnswer = answeredQuestions[currentQuestionIndex] || "";
+
+            fillInTheBlankInput.value = savedAnswer;
+            fillInTheBlankInput.disabled = isChecked;
+            
+            fillInTheBlankInput.classList.remove('correct', 'incorrect');
+            checkFillInTheBlankButton.classList.toggle('hidden', isChecked);
+            
+            if (isChecked) {
+                const isCorrect = correctnessStatus[currentQuestionIndex];
+                fillInTheBlankInput.classList.add(isCorrect ? 'correct' : 'incorrect');
+                
+                if (!isCorrect) {
+                     // Nếu sai, hiển thị đáp án đúng trong placeholder
+                     fillInTheBlankInput.placeholder = `Đáp án đúng: ${currentQuestion.answer}`;
+                }
+            } else {
+                fillInTheBlankInput.placeholder = "Nhập đáp án của bạn...";
+            }
+            
+            updateButtonStates(); 
+        }
+        
+        /**
+         * XỬ LÝ CHÍNH cho Fill-in-the-Blank: Kiểm tra, áp dụng feedback.
+         */
+        function checkFillInTheBlank() {
+            const userAnswer = fillInTheBlankInput.value.trim();
+
+            if (userAnswer === "") {
+                showMessage("Vui lòng nhập đáp án vào ô trống.", "yellow");
+                return;
+            }
+
+            // 1. Lưu đáp án
+            answeredQuestions[currentQuestionIndex] = userAnswer;
+            
+            // 2. Kiểm tra và áp dụng feedback
+            checkAndApplyFeedback(currentQuestionIndex); 
+
+            // 3. Vô hiệu hóa input và nút Kiểm tra
+            fillInTheBlankInput.disabled = true;
+            checkFillInTheBlankButton.classList.add('hidden');
+            
+            // 4. Kích hoạt nút Next
+            updateButtonStates(); 
+        }
+
+        // --- Render Logic cho Drag & Drop ---
+        function renderDragDropUI(currentQuestion) {
+            draggableItemsSource.innerHTML = '';
+            dropTargetsContainer.innerHTML = '';
+            
+            const savedDrops = answeredQuestions[currentQuestionIndex] || {};
+            const isChecked = correctnessStatus[currentQuestionIndex] !== null;
+            const itemsDataMap = new Map(currentQuestion.items.map(item => [item.text, item]));
+
+            checkAnswerButton.classList.remove('hidden');
+
+            // 1. Thiết lập vùng Source
+            const sourcePlaceholder = document.createElement('p');
+            sourcePlaceholder.classList.add('text-gray-500', 'text-sm', 'italic', 'w-full', 'source-placeholder');
+            
+            draggableItemsSource.ondragover = allowDrop;
+            draggableItemsSource.ondragleave = dragLeave;
+
+            if (!isChecked) {
+                draggableItemsSource.ondrop = (e) => drop(e, null); 
+                sourcePlaceholder.textContent = 'Kéo các thẻ ở đây... (Kéo thẻ từ ô đáp án về đây để "kéo ra")'; 
+                // Ẩn placeholder nếu đã có thẻ được kéo ra khỏi Source
+                sourcePlaceholder.classList.toggle('hidden', currentQuestion.items.length !== Object.keys(savedDrops).length);
+            } else {
+                draggableItemsSource.ondrop = null; // Vô hiệu hóa kéo/thả
+                sourcePlaceholder.textContent = 'Đã hoàn thành.';
+                sourcePlaceholder.classList.add('hidden'); 
+            }
+            draggableItemsSource.appendChild(sourcePlaceholder);
+
+
+            // 2. Tạo các vùng thả (Drop Zones) và áp dụng feedback (nếu đã kiểm tra)
+            const dropZones = {};
+            currentQuestion.categories.forEach(category => {
+                // Tạo cấu trúc HTML cho Drop Zone... (code giữ nguyên)
+                const categoryDiv = document.createElement('div');
+                categoryDiv.classList.add('bg-gray-50', 'p-4', 'rounded-xl', 'shadow-md', 'flex', 'flex-col');
+                
+                const title = document.createElement('h3');
+                title.textContent = category;
+                title.classList.add('text-lg', 'font-bold', 'text-blue-700', 'mb-3', 'border-b', 'pb-2');
+                categoryDiv.appendChild(title);
+
+                const dropZone = document.createElement('div');
+                dropZone.classList.add('drop-zone', 'flex', 'flex-wrap', 'gap-2', 'p-3', 'rounded-lg', 'flex-grow');
+                dropZone.setAttribute('data-category', category);
+                
+                if (!isChecked) {
+                    dropZone.ondragover = allowDrop;
+                    dropZone.ondragleave = dragLeave;
+                    dropZone.ondrop = (e) => drop(e, category); 
+                } else {
+                    dropZone.ondrop = null; 
+                    dropZone.style.cursor = 'default';
+
+                    // Logic áp dụng màu sắc phản hồi cho Vùng Thả
+                    const correctItemsForCategory = currentQuestion.items.filter(item => item.correctCategory === category);
+                    const droppedItems = Object.entries(savedDrops)
+                        .filter(([itemText, cat]) => cat === category)
+                        .map(([itemText]) => itemText);
+
+                    const correctlyPlacedCount = droppedItems.filter(text => itemsDataMap.get(text).correctCategory === category).length;
+                    const incorrectlyPlacedCount = droppedItems.length - correctlyPlacedCount;
+                    const missingCorrectCount = correctItemsForCategory.length - correctlyPlacedCount;
+                    
+                    if (incorrectlyPlacedCount > 0 || missingCorrectCount > 0) {
+                        dropZone.classList.add('incorrect-drop-zone');
+                    } else if (correctlyPlacedCount > 0 && incorrectlyPlacedCount === 0 && missingCorrectCount === 0) {
+                        dropZone.classList.add('correct-drop-zone');
+                    }
+                }
+                
+                dropTargetsContainer.appendChild(categoryDiv).appendChild(dropZone);
+                dropZones[category] = dropZone;
+            });
+
+            // 3. Tạo các Item (Draggable Items) và đặt vào vị trí đã lưu
+            currentQuestion.items.forEach(item => {
+                const itemEl = createDraggableItem(item, isChecked);
+                const droppedCategory = savedDrops[item.text];
+                
+                if (droppedCategory) {
+                    // Item đã được thả -> Đặt vào Drop Zone
+                    const targetZone = dropZones[droppedCategory];
+                    if (targetZone) {
+                        targetZone.appendChild(itemEl);
+                    }
+                    
+                    if (isChecked) {
+                        // ÁP DỤNG MÀU SẮC PHẢN HỒI CHO THẺ KÉO
+                        const isCorrect = droppedCategory === item.correctCategory;
+                        itemEl.classList.remove('bg-white', 'border-gray-300');
+                        itemEl.classList.add('text-gray-900', 'shadow-md', 'ring-2');
+                        
+                        if (isCorrect) {
+                            itemEl.classList.add('bg-green-200', 'ring-green-500');
+                        } else {
+                            itemEl.classList.add('bg-red-200', 'ring-red-500');
+                            const correctHint = document.createElement('span');
+                            correctHint.textContent = `(Đúng: ${item.correctCategory})`;
+                            correctHint.classList.add('text-xs', 'text-red-700', 'mt-1', 'block', 'font-normal');
+                            itemEl.appendChild(correctHint);
+                        }
+                    }
+                } else {
+                    // Item chưa được thả -> Đặt vào vùng Source
+                    draggableItemsSource.appendChild(itemEl);
+                }
+            });
+            
+            // Ẩn placeholder Source nếu không còn item nào
+            const placeholder = draggableItemsSource.querySelector('.source-placeholder');
+            if (placeholder) placeholder.classList.toggle('hidden', currentQuestion.items.length === Object.keys(savedDrops).length);
+        }
+        
+        // Hàm tạo element cho thẻ kéo
+        function createDraggableItem(item, isChecked) {
+            const itemEl = document.createElement('div');
+            itemEl.id = item.id;
+            itemEl.textContent = item.text;
+            itemEl.classList.add(
+                'draggable-item', 'p-3', 'rounded-lg', 'shadow-sm', 'font-medium', 'text-sm', 'text-gray-800'
+            );
+            
+            if (!isChecked) {
+                itemEl.setAttribute('draggable', 'true');
+                itemEl.ondragstart = drag;
+                itemEl.ondragend = dragEnd;
+            } else {
+                itemEl.setAttribute('draggable', 'false');
+                itemEl.style.cursor = 'default';
+            }
+            return itemEl;
+        }
+
+        // --- Logic Xử lý Đáp án (Select) ---
+
+        function toggleSelection(button) {
+            // Đảo trạng thái chọn/bỏ chọn cho nút (dùng cho Multi-Select)
+            button.classList.toggle('selected-option');
+        }
+
+        function singleSelectCheck(selectedOption, button) {
+            // 1. Lưu đáp án
+            answeredQuestions[currentQuestionIndex] = selectedOption;
+            // 2. Kiểm tra và áp dụng feedback (Single Select tự động check)
+            checkAndApplyFeedback(currentQuestionIndex);
+            
+            // Render lại để áp dụng hiệu ứng màu sắc và vô hiệu hóa các nút
+            renderSelectUI(questions[currentQuestionIndex]);
+            updateButtonStates();
+        }
+
+        // Xử lý nút CHECK ANSWER (cho Multi-Select và Drag & Drop)
+        checkAnswerButton.addEventListener('click', () => {
+            const currentQuestion = questions[currentQuestionIndex];
+            
+            if (currentQuestion.type === "multi_select") {
+                const allOptionButtons = optionsContainer.querySelectorAll('button');
+                const selectedOptions = Array.from(allOptionButtons)
+                    .filter(btn => btn.classList.contains('selected-option'))
+                    .map(btn => btn.textContent);
+
+                if (selectedOptions.length === 0) {
+                    showMessage("Vui lòng chọn ít nhất một đáp án trước khi kiểm tra.", "yellow");
+                    return;
+                }
+                
+                // Lưu đáp án và kiểm tra
+                answeredQuestions[currentQuestionIndex] = selectedOptions;
+                checkAndApplyFeedback(currentQuestionIndex);
+                
+                // Render lại để hiển thị phản hồi màu sắc
+                renderSelectUI(questions[currentQuestionIndex]);
+
+            } else if (currentQuestion.type === "drag_drop") {
+                const droppedAnswers = answeredQuestions[currentQuestionIndex];
+                const isAllDropped = droppedAnswers !== null && droppedAnswers && Object.keys(droppedAnswers).length === currentQuestion.items.length;
+                
+                if (!isAllDropped) {
+                    showMessage("Vui lòng kéo thả tất cả các thẻ vào vị trí trước khi kiểm tra.", "yellow");
+                    return;
+                }
+                
+                checkAndApplyFeedback(currentQuestionIndex);
+                renderDragDropUI(questions[currentQuestionIndex]); // Render lại để hiển thị feedback
+            }
+
+            updateButtonStates();
+        });
+
+        // Hàm kiểm tra và áp dụng phản hồi
+        function checkAndApplyFeedback(questionIndex) {
+            const savedAnswer = answeredQuestions[questionIndex];
+            const isCorrect = checkCorrectness(questionIndex, savedAnswer);
+            const currentQuestionType = questions[questionIndex].type;
+            
+            if (isCorrect) {
+                showMessage("🎉 Chúc mừng, đáp án chính xác!", "green");
+            } else {
+                if (currentQuestionType === "fill_in_the_blank") {
+                     showMessage(`Sai rồi. Đáp án đúng là: ${questions[questionIndex].answer}.`, "red");
+                } else if (currentQuestionType === "drag_drop") {
+                     showMessage(`Sai rồi. Đáp án kéo thả chưa hoàn toàn chính xác. Vui lòng xem phản hồi màu sắc!`, "red");
+                } else {
+                     showMessage("Sai rồi. Vui lòng xem lại kết quả (Màu xanh lá là đúng, đỏ là sai)!", "red");
+                }
+            }
+            
+            correctnessStatus[questionIndex] = isCorrect;
+            
+            // Xử lý feedback cho Fill-in-the-Blank (cần gọi lại renderFillInTheBlankUI để update placeholder)
+            if (currentQuestionType === "fill_in_the_blank") {
+                renderFillInTheBlankUI(questions[questionIndex]);
+            }
+            
+            updateSidebarHighlight(); // Cập nhật màu sắc trên sidebar
+            return isCorrect;
+        }
+
+        // --- Logic Điều hướng & Trạng thái nút ---
+
+        function updateButtonStates() {
+            const currentQuestion = questions[currentQuestionIndex];
+            const isChecked = correctnessStatus[currentQuestionIndex] !== null;
+
+            // 1. Logic cho nút NEXT
+            nextButton.disabled = !isChecked;
+            nextButton.classList.toggle('bg-gray-200', !isChecked);
+            nextButton.classList.toggle('text-gray-800', !isChecked);
+            nextButton.classList.toggle('enabled-next', isChecked);
+            
+            
+            // 2. Logic cho nút CHECK ANSWER (Multi-Select & Drag & Drop)
+            if (currentQuestion.type === "multi_select" || currentQuestion.type === "drag_drop") {
+                checkAnswerButton.classList.toggle('hidden', isChecked);
+                
+                if (!isChecked) {
+                    let isAnswered = false;
+                    
+                    if (currentQuestion.type === "drag_drop") {
+                        const droppedAnswers = answeredQuestions[currentQuestionIndex];
+                        // Drag & Drop: Sẵn sàng kiểm tra khi TẤT CẢ items đã được thả
+                        isAnswered = droppedAnswers !== null && droppedAnswers && Object.keys(droppedAnswers).length === currentQuestion.items.length;
+                    } else if (currentQuestion.type === "multi_select") {
+                        // FIX: Kiểm tra trạng thái lựa chọn hiện tại của DOM (số nút có class 'selected-option')
+                        const currentSelections = optionsContainer.querySelectorAll('.selected-option').length;
+                        isAnswered = currentSelections > 0;
+                    }
+                    
+                    checkAnswerButton.disabled = !isAnswered;
+                    checkAnswerButton.classList.toggle('check-button-enabled', isAnswered);
+                    checkAnswerButton.classList.toggle('check-button-disabled', !isAnswered);
+                }
+
+            }
+            
+            // 3. Logic cho nút CHECK FILL-IN-THE-BLANK
+            if (currentQuestion.type === "fill_in_the_blank") {
+                if (!isChecked) {
+                    const isAnswered = fillInTheBlankInput.value.trim() !== "";
+                    checkFillInTheBlankButton.disabled = !isAnswered;
+                    checkFillInTheBlankButton.classList.toggle('check-button-enabled', isAnswered);
+                    checkFillInTheBlankButton.classList.toggle('check-button-disabled', !isAnswered);
+
+                    // Lắng nghe sự kiện input để kích hoạt nút Kiểm tra ngay lập tức
+                    fillInTheBlankInput.oninput = updateButtonStates; 
+                }
+            }
+        }
+        
+        nextButton.addEventListener('click', nextQuestion);
+        
+        function nextQuestion() {
+            // Yêu cầu kiểm tra trước khi chuyển câu (áp dụng cho Multi, Drag & Drop, Fill-in-the-Blank)
+            if (correctnessStatus[currentQuestionIndex] === null) {
+                const currentType = questions[currentQuestionIndex].type;
+                if (currentType === "multi_select" || currentType === "drag_drop" || currentType === "fill_in_the-blank") {
+                    showMessage("Vui lòng nhấn nút 'Kiểm tra đáp án' trước khi chuyển câu.", "yellow");
+                    return;
+                }
+            }
+
+            // Chuyển sang câu tiếp theo (hoặc hoàn thành bài thi)
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function jumpToQuestion(index) {
+            currentQuestionIndex = index;
+            showQuestion();
+        }
+
+        // --- Logic Màn hình Bắt đầu & Kết quả ---
+        
+        /**
+         * Chuyển về màn hình bắt đầu và reset thời gian.
+         */
+        function goToStartScreen() {
+            clearInterval(timerInterval);
+            elapsedTime = 0; 
+            timerDisplay.textContent = "00:00"; // Đặt lại đồng hồ hiển thị
+
+            quizContent.classList.add('hidden');
+            resultsScreen.classList.add('hidden');
+            sidebar.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+
+            // Không cần reset dữ liệu bài làm ở đây, vì hàm startButton.addEventListener('click') 
+            // sẽ tự động gọi setup lại khi người dùng nhấn "Bắt đầu" lần nữa.
+        }
+
+
+        function showResults() {
+            clearInterval(timerInterval);
+            quizContent.classList.add('hidden');
+            resultsScreen.classList.remove('hidden');
+            
+            const totalCorrect = correctnessStatus.filter(status => status === true).length;
+            const totalQuestions = questions.length;
+
+            // TỐI ƯU HÓA TÍNH ĐIỂM: Cập nhật thẻ hiển thị điểm số
+            finalScore.textContent = `${totalCorrect} / ${totalQuestions}`;
+            
+            if (totalCorrect === totalQuestions) {
+                resultMessage.textContent = `Bạn đã trả lời đúng ${totalCorrect} / ${totalQuestions} câu. Xin chúc mừng! Bạn đạt kết quả tuyệt đối.`;
+            } else {
+                resultMessage.textContent = `Bạn đã trả lời đúng ${totalCorrect} / ${totalQuestions} câu. Hãy xem lại các câu trả lời của mình trên giao diện nhé.`;
+            }
+            
+            sidebar.classList.add('hidden');
+        }
+
+        function restartQuiz() {
+            // Reset tất cả trạng thái
+            currentQuestionIndex = 0;
+            answeredQuestions = new Array(questions.length).fill(null);
+            correctnessStatus = new Array(questions.length).fill(null);
+            
+            resultsScreen.classList.add('hidden');
+            quizContent.classList.remove('hidden');
+            sidebar.classList.remove('hidden'); 
+            
+            startTimer();
+            createQuestionList(); 
+            showQuestion();
+        }
+
+        // --- Logic Đồng hồ & Sidebar ---
+
+        function startTimer() {
+            clearInterval(timerInterval); 
+            timerInterval = setInterval(() => {
+                elapsedTime++;
+                const minutes = Math.floor(elapsedTime / 60);
+                const seconds = elapsedTime % 60;
+                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function createQuestionList() {
+            questionListContainer.innerHTML = '';
+            questions.forEach((q, index) => {
+                const button = document.createElement('button');
+                button.textContent = index + 1;
+                button.classList.add(
+                    "w-8", "h-8", "rounded-full", "font-medium", "text-sm",
+                    "bg-gray-200", "text-gray-800", "hover:bg-blue-200",
+                    "transition-colors", "duration-200"
+                );
+                button.setAttribute('data-index', index);
+                button.addEventListener('click', () => {
+                    jumpToQuestion(index);
+                });
+                questionListContainer.appendChild(button);
+            });
+        }
+        
+        function updateSidebarHighlight() {
+            const allQuestionButtons = questionListContainer.querySelectorAll('button');
+            allQuestionButtons.forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'bg-green-500', 'bg-red-500', 'bg-yellow-400');
+                
+                const index = parseInt(btn.getAttribute('data-index'));
+
+                if (index === currentQuestionIndex) {
+                    // Highlight câu hỏi hiện tại
+                    btn.classList.add('bg-blue-600', 'text-white');
+                } else if (correctnessStatus[index] === true) {
+                    // Đánh dấu câu trả lời đúng
+                    btn.classList.add('bg-green-500', 'text-white');
+                } else if (correctnessStatus[index] === false) {
+                    // Đánh dấu câu trả lời sai
+                    btn.classList.add('bg-red-500', 'text-white');
+                } else if (answeredQuestions[index] !== null) {
+                    // Đánh dấu câu hỏi đã trả lời (nhưng chưa kiểm tra/chưa chuyển câu)
+                    btn.classList.add('bg-yellow-400', 'text-white');
+                }
+            });
+        }
+        
+        // --- Logic Hiển thị thông báo tạm thời ---
+        function showMessage(text, color) {
+            const existingMessage = quizContent.querySelector('.temp-message');
+            if (existingMessage) existingMessage.remove();
+            
+            const colorClasses = {
+                "yellow": "bg-yellow-100 border-yellow-400 text-yellow-700",
+                "red": "bg-red-100 border-red-400 text-red-700",
+                "green": "bg-green-100 border-green-400 text-green-700"
+            };
+            const messageBox = document.createElement('div');
+            messageBox.textContent = text;
+            
+            const colorClassString = colorClasses[color] || colorClasses['yellow'];
+            
+            messageBox.classList.add(
+                ...colorClassString.split(' '), 
+                "border", "px-4", "py-3", "rounded", "relative", "mb-4", "temp-message"
+            );
+            
+            quizContent.insertBefore(messageBox, questionCounter.nextElementSibling);
+            setTimeout(() => messageBox.remove(), 3000); 
+        }
+
+        // --- Khởi tạo sự kiện ---
+        startButton.addEventListener('click', () => {
+            // Đảm bảo reset trạng thái trước khi bắt đầu
+            currentQuestionIndex = 0;
+            answeredQuestions = new Array(questions.length).fill(null);
+            correctnessStatus = new Array(questions.length).fill(null);
+            
+            startScreen.classList.add('hidden');
+            quizContent.classList.remove('hidden');
+            sidebar.classList.remove('hidden');
+            createQuestionList();
+            startTimer();
+            showQuestion();
+        });
+
+        restartButton.addEventListener('click', restartQuiz);
+        
+        // CẬP NHẬT: Gán sự kiện cho nút Thoát/Kết thúc để quay về màn hình bắt đầu
+        exitButton.addEventListener('click', () => {
+            showMessage("Đã thoát khỏi bài kiểm tra. Dữ liệu làm bài hiện tại sẽ không được lưu. Đang quay về màn hình bắt đầu...", "red");
+            setTimeout(goToStartScreen, 1000);
+        });
+    </script>
+</body>
+</html>

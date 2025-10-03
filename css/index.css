@@ -1,0 +1,112 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #9ae7ab;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    }
+.container {
+    flex-grow: 1;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    }
+.content-box {
+    background-color: #ffffff;
+    padding: 45px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-width: 1000px;
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    }
+.grid-container {
+    display: grid;
+    gap: 25px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    justify-items: center;
+}
+.quiz-card {
+    background-color: #f7fafc;
+    border: 1px solid #2d2e2e;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    }
+.quiz-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    border-color: #e503f9;
+    }
+.quiz-card h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #3182ce;
+    margin-bottom: 15px;
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+.quiz-card p {
+    color: #718096;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+.start-button {
+    display: inline-block;
+    padding: 14px 30px;
+    font-size: 1.1rem;
+    font-weight: 400;
+    font-family: 'Inter', sans-serif;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    background-color: #42e1d6;
+    color: rgb(250, 252, 249);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 8px rgba(66, 153, 225, 0.2);
+    text-decoration: none;
+}
+.start-button:hover {
+    background-color: #e05284;
+    transform: translateY(-3px);
+    }
+nav {
+    background-color: #0483fa;
+    color: white;
+    padding: 1rem 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.nav-link {
+    transition: color 0.3s ease;
+    }
+.nav-link:hover {
+    color: #f008cd;
+}
+.logo {
+    height: 50px;
+    margin-right: 0px;
+    border-radius: 25px;
+}
+.hoidapthongtue {
+    font-size: 32px;
+    font-weight: bold;
+    font-style: italic;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    margin-left: 20px;
+    padding-left: 100px;
+    color: #07f63b;
+    text-shadow: 4px 2px 6px rgba(255, 3, 3, 0.3);
+}

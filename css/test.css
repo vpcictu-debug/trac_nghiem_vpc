@@ -1,0 +1,103 @@
+                /* Thiết lập font chữ chung và màu nền */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Xám nhạt */
+            color: #1a202c; /* Màu chữ chính */
+        }
+        
+        /* Class tùy chỉnh cho các nút đáp án được chọn (Multi-Select) */
+        .selected-option {
+            background-color: #93c5fd !important; /* blue-300 */
+            border-color: #2563eb !important;    /* blue-600 */
+            color: #1e40af !important;           /* blue-900 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Nút đáp án (chung cho Single/Multi) */
+        .answer-button {
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .answer-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+        
+        /* DRAG & DROP: Thẻ kéo */
+        .draggable-item {
+            cursor: grab;
+            transition: transform 0.2s, background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+        }
+        .draggable-item:active {
+            cursor: grabbing;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            transform: scale(1.05); /* Hiệu ứng nhấc thẻ */
+        }
+        
+        /* DRAG & DROP: Vùng thả (Source và Targets) */
+        .drop-zone {
+            min-height: 180px; /* Chiều cao tối thiểu */
+            border: 3px dashed #cbd5e1; /* Đường viền gạch ngang */
+            transition: border-color 0.2s, background-color 0.2s;
+            align-content: flex-start; 
+        }
+        .drop-zone.drag-over {
+            border-color: #3b82f6; /* blue-500 khi rê qua */
+            background-color: #eff6ff; /* blue-50 khi rê qua */
+        }
+        
+        /* DRAG & DROP: Phản hồi đúng/sai cho vùng thả */
+        .correct-drop-zone {
+            background-color: #ecfdf5 !important; /* green-50 */
+            border-color: #059669 !important; /* green-600 */
+        }
+        .incorrect-drop-zone {
+            background-color: #fef2f2 !important; /* red-50 */
+            border-color: #dc2626 !important; /* red-600 */
+        }
+        
+        /* FILL-IN-THE-BLANK: Phản hồi đúng/sai cho ô nhập */
+        #fill-in-the-blank-input.correct {
+            border-color: #10b981; /* green-500 */
+            background-color: #f0fff4; 
+        }
+        #fill-in-the-blank-input.incorrect {
+            border-color: #ef4444; /* red-500 */
+            background-color: #fff5f5; 
+        }
+        
+        /* Nút Chuyển câu (Next Button) */
+        .enabled-next {
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+        }
+        .enabled-next:hover {
+            background-color: #2563eb; /* blue-600 */
+        }
+        
+        /* Nút Kiểm tra (Check Button) */
+        .check-button-enabled {
+            background-color: #10b981; /* green-500 */
+        }
+        .check-button-enabled:hover {
+            background-color: #059669; /* green-600 */
+        }
+        .check-button-disabled {
+            background-color: #a1a1aa; /* gray-400 */
+            cursor: not-allowed;
+        }
+        li {
+            list-style: none;
+            text-decoration: underline;
+            border: 1px solid black;
+            width: 10%;
+            height: 30px;
+            color: black;
+            text-align: center;
+            border-radius: 15px;
+            background-color: thistle;
+        }
+
