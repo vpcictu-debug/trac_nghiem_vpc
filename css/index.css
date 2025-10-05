@@ -110,3 +110,9 @@ nav {
     color: #07f63b;
     text-shadow: 4px 2px 6px rgba(255, 3, 3, 0.3);
 }
+.clown-face {
+    height: 50px;
+    margin-left: 20px;
+    border-radius: 25px;
+}
+

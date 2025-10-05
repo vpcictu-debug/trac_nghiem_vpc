@@ -1,7 +1,7 @@
                 /* Thiết lập font chữ chung và màu nền */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8; /* Xám nhạt */
+            background-color: #067df5; /* Xám nhạt */
             color: #1a202c; /* Màu chữ chính */
         }
         
@@ -99,5 +99,11 @@
             text-align: center;
             border-radius: 15px;
             background-color: thistle;
+        }
+        .clown {
+            height: 50px;
+            margin-left: 20px;
+            border-radius: 25px;
+            text-align: center;
         }
 

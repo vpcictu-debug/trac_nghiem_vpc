@@ -10,6 +10,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome CDN (phiên bản 6.5.0) -->
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-4m+EOxv0YjJw5xD57XjS5+M2MprA6zP8jOBZ8mE7Fqk3xKsv1ZfUnCG9kR3gOkh7oG3kO6xjq+1qHDZ6bP9R9w=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+    />
+
     <link rel="stylesheet" href="css/test.css">
     <!-- ************************************ -->
     <!-- PHẦN 1: CSS TÙY CHỈNH VÀ GHI ĐÈ TAILWIND -->
@@ -27,7 +36,10 @@
     <!-- Header chung của ứng dụng -->
     <header class="w-full bg-green-500 text-white shadow-lg py-4 px-6 relative">
         <li><a href="index.html">Quay lại trang chủ</a></li>
-        <h1 class="text-2xl font-bold text-center">Xoáy Lắm Hẹ Hẹ Hẹ</h1>
+        
+        <h1 class="text-2xl font-bold text-center">Kiểm Tra Kiến Thức Tổng Hợp</h1>
+        <i class="fa-solid fa-alarm-clock"></i>
+
         <!-- Nút Thoát/Kết thúc bài kiểm tra -->
         <button id="exit-button" class="absolute top-4 right-6 bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-4 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 text-sm">Thoát</button>
     </header>
@@ -158,189 +170,189 @@
     <!-- ************************************ -->
     <script>
         // Mảng chứa các câu hỏi trắc nghiệm (Dữ liệu của Quiz)
-        const questions = [
-            {
-                question: "Thủ đô của Việt Nam là gì?",
-                options: ["Hà Nội", "Đà Nẵng", "TP. Hồ Chí Minh", "Huế"],
-                answer: "Hà Nội",
-                type: "single_select" 
-            },
-            {
-                question: "Các nguyên tố nào sau đây là kim loại kiềm?",
-                options: ["Na (Natri)", "K (Kali)", "Ca (Canxi)", "Mg (Magie)"],
-                answer: ["Na (Natri)", "K (Kali)"],
-                type: "multi_select"
-            },
-            // CÂU HỎI KÉO THẢ (DRAG & DROP)
-            {
-                question: "Ngày 2/9 có phải là Ngày Quốc Khánh của Việt Nam hay không?",
-                options: ["Đúng", "Sai"],
-                answer: "Đúng",
-                type: "single_select" 
-            },
-            // CÂU HỎI ĐIỀN TỪ (FILL-IN-THE-BLANK)
-            {
-                question: "Cho các hành tinh sau: Trái đất, Sao Hỏa, Sao Thủy, Sao Kim.\nHành tinh nào gần Mặt Trời nhất:",
-                answer: "Sao Thủy",
-                type: "fill_in_the_blank"
-            },
-            {
-                question: "Tên thật của Bác Hồ là gì?",
-                options: ["Nguyễn Sinh Cung", "Nguyễn Tất Thành", "Nguyễn Ái Quốc", "Hồ Chí Minh"],
-                answer: "Nguyễn Sinh Cung",
-                type: "single_select"
-            },
-            {
-                question: "Những thành phố nào của Việt Nam giáp biển?",
-                options: ["Hà Nội", "Đà Nẵng", "Nha Trang", "Đà Lạt"],
-                answer: ["Đà Nẵng", "Nha Trang"],
-                type: "multi_select"
-            },
-            {
-                question: "Bình Ngô đại cáo là tác phẩm của ai?",
-                options: ["Nguyễn Trãi", "Nguyễn Du", "Hồ Chí Minh", "Trần Hưng Đạo"],
-                answer: "Nguyễn Trãi",
-                type: "single_select"
-            },
-            {
-                question: "Sông nào dài nhất Việt Nam?",
-                options: ["Sông Hồng", "Sông Cửu Long", "Sông Sê Pôn", "Sông Đà"],
-                answer: "Sông Cửu Long",
-                type: "single_select"
-            },
-            {
-                question: "Hang Sơn Đoòng nằm ở tỉnh nào?",
-                options: ["Quảng Ninh", "Quảng Bình cũ", "Hà Giang", "Lào Cai"],
-                answer: "Quảng Bình cũ",
-                type: "single_select"
-            },
-            {
-                question: "Quốc hoa của Việt Nam là hoa gì?",
-                options: ["Hoa hồng", "Hoa sen", "Hoa đào", "Hoa mai"],
-                answer: "Hoa sen",
-                type: "single_select"
-            },
-            {
-                question: "Môn thể thao nào được gọi là 'môn thể thao vua'?",
-                options: ["Bóng chuyền", "Bóng đá", "Bóng rổ", "Tennis"],
-                answer: "Bóng đá",
-                type: "single_select"
-            },
-            {
-                question: "Lễ hội nào được tổ chức hàng năm vào ngày mùng 10 tháng 3 âm lịch?",
-                options: ["Lễ hội chùa Hương", "Lễ hội đền Hùng", "Lễ hội pháo hoa Đà Nẵng", "Lễ hội Chùa Bái Đính"],
-                answer: "Lễ hội đền Hùng",
-                type: "single_select"
-            },
-            {
-                question: "Đèo nào được mệnh danh là 'Thiên hạ đệ nhất hùng quan'?",
-                options: ["Đèo Hải Vân", "Đèo Mã Pí Lèng", "Đèo Khau Phạ", "Đèo Ô Quy Hồ"],
-                answer: "Đèo Hải Vân",
-                type: "single_select"
-            },
-            {
-                question: "Vịnh nào được UNESCO công nhận là Di sản Thiên nhiên Thế giới?",
-                options: ["Vịnh Cam Ranh", "Vịnh Hạ Long", "Vịnh Lăng Cô", "Vịnh Nha Trang"],
-                answer: "Vịnh Hạ Long",
-                type: "single_select"
-            },
-            {
-                question: "Nhà toán học nào nổi tiếng với định lý Pytago?",
-                options: ["Euclid", "Archimedes", "Pythagoras", "Newton"],
-                answer: "Pythagoras",
-                type: "single_select"
-            },
-            {
-                question: "Nguyên tố hóa học có ký hiệu 'Fe' là gì?",
-                options: ["Kẽm", "Đồng", "Sắt", "Vàng"],
-                answer: "Sắt",
-                type: "single_select"
-            },
-            {
-                question: "Tác phẩm văn học 'Truyện Kiều' do ai sáng tác?",
-                options: ["Nguyễn Du", "Hồ Xuân Hương", "Nguyễn Khuyến", "Nguyễn Bỉnh Khiêm"],
-                answer: "Nguyễn Du",
-                type: "single_select"
-            },
-            {
-                question: "Nước nào có nhiều kim tự tháp nhất?",
-                options: ["Ai Cập", "Sudan", "Mexico", "Trung Quốc"],
-                answer: "Sudan",
-                type: "single_select"
-            },
-            {
-                question: "Loài chim nào không thể bay?",
-                options: ["Chim đại bàng", "Chim sẻ", "Chim cánh cụt", "Chim bồ câu"],
-                answer: "Chim cánh cụt",
-                type: "single_select"
-            },
-            {
-                question: "Vùng đất nào được gọi là 'xứ sở hoa anh đào'?",
-                options: ["Hàn Quốc", "Việt Nam", "Trung Quốc", "Nhật Bản"],
-                answer: "Nhật Bản",
-                type: "single_select"
-            },
-            {
-                question: "Đơn vị tiền tệ của Nhật Bản là gì?",
-                options: ["Won", "Euro", "Yên", "Đô la"],
-                answer: "Yên",
-                type: "single_select"
-            },
-            {
-                question: "Sông nào chảy qua thủ đô Paris của Pháp?",
-                options: ["Sông Thames", "Sông Seine", "Sông Rhine", "Sông Volga"],
-                answer: "Sông Seine",
-                type: "single_select"
-            },
-            {
-                question: "Nước nào có hình dạng giống chiếc ủng?",
-                options: ["Tây Ban Nha", "Ý", "Hy Lạp", "Pháp"],
-                answer: "Ý",
-                type: "single_select"
-            },
-            {
-                question: "Loài động vật có vú nào duy nhất biết bay?",
-                options: ["Cú mèo", "Dơi", "Chim ruồi", "Gà"],
-                answer: "Dơi",
-                type: "single_select"
-            },
-            {
-                question: "Tên thủ đô của Úc là gì?",
-                options: ["Sydney", "Melbourne", "Canberra", "Brisbane"],
-                answer: "Canberra",
-                type: "single_select"
-            },
-            {
-                question: "Đại dương nào lớn nhất trên Trái Đất?",
-                options: ["Đại Tây Dương", "Thái Bình Dương", "Ấn Độ Dương", "Bắc Băng Dương"],
-                answer: "Thái Bình Dương",
-                type: "single_select"
-            },
-            {
-                question: "Quốc gia nào nổi tiếng với các kim tự tháp?",
-                options: ["Ai Cập", "Hy Lạp", "Mexico", "Peru"],
-                answer: "Ai Cập",
-                type: "single_select"
-            },
-            {
-                question: "Vật chất rắn nhất trên Trái Đất là gì?",
-                options: ["Sắt", "Vàng", "Kim cương", "Thép"],
-                answer: "Kim cương",
-                type: "single_select"
-            },
-            {
-                question: "Bộ phim 'Avatar' do ai đạo diễn?",
-                options: ["Steven Spielberg", "James Cameron", "Christopher Nolan", "Martin Scorsese"],
-                answer: "James Cameron",
-                type: "single_select"
-            },
-            {
-                question: "Loài động vật nào ngủ đứng?",
-                options: ["Ngựa", "Hươu cao cổ", "Cả hai đáp án trên", "Chó"],
-                answer: ["Ngựa", "Hươu cao cổ"],
-                type: "multi_select"
-            }
-        ];
+    const questions = [
+    {
+        question: "Đố em ba gọi má bằng gì? Anh gọi em bằng gì? Ông ngoại gọi bà ngoại bằng gì? Chồng gọi vợ bằng gì?",
+        options: ["Mồm", "Miệng", "Lưỡi", "Họng"],
+        answer: "Miệng",
+        type: "single_select"
+    },
+    {
+        question: "Động vật có vú nào biết bay?",
+        options: ["Con chim sẻ", "Con dơi", "Con cá heo", "Con sóc"],
+        answer: "Con dơi",
+        type: "single_select"
+    },
+    {
+        question: "Cái gì khi xài thì quăng đi, không xài thì lấy lại?",
+        options: ["Cái mũ", "Cái neo thuyền", "Cái chổi", "Cái rổ"],
+        answer: "Cái neo thuyền",
+        type: "single_select"
+    },
+    {
+        question: "Lá nào bỏ vào nước không thấm nước?",
+        options: ["Lá sen", "Lá chuối", "Lá thư", "Lá bàng"],
+        answer: "Lá thư",
+        type: "single_select"
+    },
+    {
+        question: "Con gì bỏ cái đuôi thành con ngựa?",
+        options: ["Con chó", "Con mèo", "Con rắn", "Con trâu"],
+        answer: "Con mèo",
+        type: "single_select"
+    },
+    {
+        question: "Trời đang âm u, có 3 thằng mù chung một cây dù. Hỏi thằng nào ướt?",
+        options: ["Cả 3 thằng", "Thằng giữa", "Không thằng nào", "Thằng cầm dù"],
+        answer: "Không thằng nào",
+        type: "single_select"
+    },
+    {
+        question: "Người da đen tắm biển đen. Vậy họ bị gì?",
+        options: ["Bị đen hơn", "Bị ướt", "Bị cháy nắng", "Bị lạnh"],
+        answer: "Bị ướt",
+        type: "single_select"
+    },
+    {
+        question: "Con gì đi ngồi, đứng ngồi, nằm ngồi, ngủ cũng ngồi luôn?",
+        options: ["Con chó", "Con mèo", "Con ếch", "Con khỉ"],
+        answer: "Con ếch",
+        type: "single_select"
+    },
+    {
+        question: "Làm thế nào để không đụng ngón tay khi đập búa vào móng?",
+        options: ["Nhờ người khác đập", "Đeo găng tay", "Cầm búa bằng cả hai tay", "Nhắm kỹ hơn"],
+        answer: "Cầm búa bằng cả hai tay",
+        type: "single_select"
+    },
+    {
+        question: "Cái đầu giống mèo, chân giống mèo, tai giống mèo, nhưng không phải mèo. Là gì?",
+        options: ["Con cáo", "Con hổ", "Con của con mèo", "Con cầy"],
+        answer: "Con của con mèo",
+        type: "single_select"
+    },
+    {
+        question: "Cái gì luôn đi đến mà không bao giờ đến nơi?",
+        options: ["Ngày mai", "Tương lai", "Cơn mưa", "Xe buýt"],
+        answer: "Ngày mai",
+        type: "single_select"
+    },
+    {
+        question: "Tôi có 4 cái chân, 1 cái lưng, nhưng không có cơ thể. Tôi là ai?",
+        options: ["Cái bàn", "Cái ghế", "Con bò", "Cái giường"],
+        answer: "Cái ghế",
+        type: "single_select"
+    },
+    {
+        question: "Con gì càng to càng nhỏ?",
+        options: ["Con cua", "Con voi", "Con chuột", "Con rắn"],
+        answer: "Con cua",
+        type: "single_select"
+    },
+    {
+        question: "Khi đập vỡ ra có chất lỏng, đun nóng thành chất rắn. Là gì?",
+        options: ["Quả trứng", "Hạt nhựa", "Hạt dẻ", "Quả bơ"],
+        answer: "Quả trứng",
+        type: "single_select"
+    },
+    {
+        question: "Con gì đập thì sống, không đập thì chết?",
+        options: ["Con tim", "Con cá", "Con chim", "Con ếch"],
+        answer: "Con tim",
+        type: "single_select"
+    },
+    {
+        question: "Khi nào 5 + 7 = 1?",
+        options: ["Khi làm sai", "Khi 5 tháng + 7 tháng = 1 năm", "Khi đếm ngược", "Khi đồng hồ chỉ 12 giờ"],
+        answer: "Khi 5 tháng + 7 tháng = 1 năm",
+        type: "single_select"
+    },
+    {
+        question: "Chim gì không biết bay không biết đi?",
+        options: ["Chim cánh cụt", "Chim sắt", "Chim đồ chơi", "Chim công"],
+        answer: "Chim đồ chơi",
+        type: "single_select"
+    },
+    {
+        question: "Con gì sinh ra đã ồn ào?",
+        options: ["Con ngựa", "Con la", "Con chó", "Con khỉ"],
+        answer: "Con la",
+        type: "single_select"
+    },
+    {
+        question: "Biển nào nhỏ nhất?",
+        options: ["Biển hồ", "Biển Đông", "Biển số xe", "Biển quảng cáo"],
+        answer: "Biển số xe",
+        type: "single_select"
+    },
+    {
+        question: "Chim nào thích dùng ngón tay tác động vật lý?",
+        options: ["Chim cút", "Chim sẻ", "Chim cốc", "Chim công"],
+        answer: "Chim cốc",
+        type: "single_select"
+    },
+    {
+        question: "Ăn gì mà càng ăn càng ốm?",
+        options: ["Ăn chay", "Ăn kiêng", "Ăn rau", "Ăn gạo lứt"],
+        answer: "Ăn kiêng",
+        type: "single_select"
+    },
+    {
+        question: "Cà gì không ăn được?",
+        options: ["Cà tím", "Cà pháo", "Cà chua", "Cà lăm"],
+        answer: "Cà lăm",
+        type: "single_select"
+    },
+    {
+        question: "Ăn gì không cần nhai?",
+        options: ["Ăn cháo", "Ăn đấm", "Ăn kem", "Ăn sữa chua"],
+        answer: "Ăn đấm",
+        type: "single_select"
+    },
+    {
+        question: "Sông gì không có nước?",
+        options: ["Sông Hồng", "Sông Nile", "Sông Ngân Hà", "Sông Trăng"],
+        answer: "Sông Ngân Hà",
+        type: "single_select"
+    },
+    {
+        question: "Cá nào biết khóc?",
+        options: ["Cá mập", "Cá sấu", "Cá heo", "Cá trê"],
+        answer: "Cá sấu",
+        type: "single_select"
+    },
+    {
+        question: "Cái gì phải bị phá vỡ trước khi dùng?",
+        options: ["Quả trứng", "Cái lọ", "Cái túi", "Hộp quà"],
+        answer: "Quả trứng",
+        type: "single_select"
+    },
+    {
+        question: "Tôi cao khi còn trẻ, thấp khi già. Tôi là ai?",
+        options: ["Cây nến", "Cây tre", "Cái cột", "Cây cỏ"],
+        answer: "Cây nến",
+        type: "single_select"
+    },
+    {
+        question: "Bạn có thể giữ được gì sau khi cho ai đó?",
+        options: ["Tiền", "Lời hứa", "Quà", "Bí mật"],
+        answer: "Lời hứa",
+        type: "single_select"
+    },
+    {
+        question: "Điều gì luôn ở trước mặt bạn nhưng không thể nhìn thấy?",
+        options: ["Không khí", "Tương lai", "Ánh sáng", "Gương"],
+        answer: "Tương lai",
+        type: "single_select"
+    },
+    {
+        question: "Có một ngôi nhà một tầng, mọi thứ đều màu vàng. Cầu thang màu gì?",
+        options: ["Màu vàng", "Màu trắng", "Không có cầu thang", "Màu nâu"],
+        answer: "Không có cầu thang",
+        type: "single_select"
+    }
+];
+
 
         let currentQuestionIndex = 0; // Chỉ số câu hỏi hiện tại
         let elapsedTime = 0; // Thời gian làm bài (giây)
